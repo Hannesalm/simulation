@@ -56,7 +56,7 @@ const loop = () => {
     if (frame === TICK_RATE) {
         frame = 0
         seconds++
-        if (planets.length < 6) {
+        if (planets.length < planetNames.length) {
             if (startLife()) {
                 let nr = Math.floor(Math.random() * planetNames.length);
                 let planet = new Planet(planetNames[nr]);
