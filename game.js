@@ -15,7 +15,7 @@ let seconds = 0;
 let minutes = 0;
 let frame = 0;
 
-let life = 0;
+let print = true;
 
 let planetNames = [
     "Mastraustea",
@@ -44,7 +44,17 @@ let peopleData = {
 
 let planets = [];
 
+let longestTime = 0;
+
+// function test() {
+//     console.log("Running test...");
+//     new Planet('testplaneten').init();
+// };
+
+// test();
+
 const loop = () => {
+    var t0 = performance.now();
     setTimeout(loop, tickLengthMs)
     let now = hrtimeMs()
     let delta = (now - previous) / 1000
@@ -63,6 +73,7 @@ const loop = () => {
                 planet.init();
                 planets.push(planet)
                 printPlanets();
+                longestTime = 0;
             }
         }
 
@@ -74,20 +85,46 @@ const loop = () => {
         });
     }
 
+    if(seconds === 15 || seconds === 30 || seconds === 45) {
+        if(print) {
+            printPlanets();
+            longestTime = 0;
+            print = false;
+        }
+    }
+    if(seconds === 16 || seconds === 31 || seconds === 46) {
+        print = true;
+    }
+
     if (seconds === 60) {
         minutes++;
         seconds = 0;
         if (planets.length) printPlanets();
+        longestTime = 0;
         // console.log(`${life} planets with life`);
     }
-
+    var t1 = performance.now();
+    let time = (t1 - t0);
+    if(time > longestTime) longestTime = time;
     // Clear console?
     //console.log('\033[2J');
 }
 
 function printPlanets() {
+    console.log(`<--------- Year ${minutes}, longest execute ${longestTime.toFixed(2)} ms --------->`);
     planets.forEach(planet => {
-        console.log("Name: ", `'${planet.name}'`, "Population: ", planet.population.length);
+        let oldest = 0;
+        let offsprings = 0;
+        let most = {name: "none"};
+        planet.population.forEach(entity => {
+            if(entity.age > oldest) oldest = entity.age;
+            if(entity.offsprings > offsprings) {
+                offsprings = entity.offsprings;
+                most.name = entity.name;
+            }
+        })
+        //let dead = planet.population.filter(t => t.dead);
+        console.log("Name:",`'${planet.name}'`, "Type:",`'${planet.type}'`, "Population:", planet.population.length, "Oldest:", oldest, "Dead:", planet.died, `Cloned ${offsprings}, ${most.name}`);
     })
 }
 
@@ -113,7 +150,6 @@ function startLife() {
     let nr = Math.floor(Math.random() * 100000);
     if (nr > 90000) {
         //console.log("Life emerges!", nr);
-        life++;
         return true
     }
 
