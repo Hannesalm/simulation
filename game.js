@@ -81,20 +81,19 @@ const loop = () => {
     }
     if (planets.length) {
         planets.forEach(planet => {
-            planet.offspring();
+            planet.accumulate();
         });
     }
 
-    if(seconds === 15 || seconds === 30 || seconds === 45) {
-        if(print) {
-            printPlanets();
-            longestTime = 0;
-            print = false;
-        }
-    }
-    if(seconds === 16 || seconds === 31 || seconds === 46) {
-        print = true;
-    }
+    // if(seconds % 2) {
+    //     print = true;
+    // } else {
+    //     if(print) {
+    //         printPlanets();
+    //         longestTime = 0;
+    //         print = false;
+    //     }
+    // }
 
     if (seconds === 60) {
         minutes++;
@@ -108,23 +107,14 @@ const loop = () => {
     if(time > longestTime) longestTime = time;
     // Clear console?
     //console.log('\033[2J');
+    printPlanets();
 }
 
 function printPlanets() {
+    console.log('\033[2J');
     console.log(`<--------- Year ${minutes}, longest execute ${longestTime.toFixed(2)} ms --------->`);
     planets.forEach(planet => {
-        let oldest = 0;
-        let offsprings = 0;
-        let most = {name: "none"};
-        planet.population.forEach(entity => {
-            if(entity.age > oldest) oldest = entity.age;
-            if(entity.offsprings > offsprings) {
-                offsprings = entity.offsprings;
-                most.name = entity.name;
-            }
-        })
-        //let dead = planet.population.filter(t => t.dead);
-        console.log("Name:",`'${planet.name}'`, "Type:",`'${planet.type}'`, "Population:", planet.population.length, "Oldest:", oldest, "Dead:", planet.died, `Cloned ${offsprings}, ${most.name}`);
+        console.log("Name:",`'${planet.name}'`, "Type:",`'${planet.type}'`, "Total population:", planet.total,"Current population:", planet.population.length, "Dead:", planet.died);
     })
 }
 
@@ -148,7 +138,7 @@ function initData() {
 function startLife() {
 
     let nr = Math.floor(Math.random() * 100000);
-    if (nr > 90000) {
+    if (nr > 990) {
         //console.log("Life emerges!", nr);
         return true
     }

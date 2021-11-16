@@ -7,16 +7,18 @@ class Planet {
     constructor(name) {
         this.name = name;
         this.population = [];
+        this.total = 0;
         this.type = "";
         this.died = 0;
     }
 
-    offspring() {
+    accumulate() {
         if (this.population.length > 1) {
             let iterations = this.population.length
             for (let i = 0; i < iterations; i++) {
                 if (!this.population[i].dead) {
                     if (this.population[i].clone()) {
+                        this.total++;
                         let name = this.generateName();
                         this.population[i].offsprings++;
                         this.population.push(new Entity(name, this.population[i].race));
@@ -29,20 +31,25 @@ class Planet {
                 //     this.population.splice(i, 1);
                 // }
             }
-            let arr = this.population.filter(t => !t.dead);
-
-            if (arr.length !== this.population.length) {
-                let died = this.population.length - arr.length
-                //console.log(arr.length, this.population.length, died);
-                this.died += died;
-                this.population = arr;
-            }
         } else {
-            if (this.population[0].clone()) {
-                let name = this.generateName();
-                this.population.push(new Entity(name, this.population[0].race));
-                //console.log(`First clone is ${name}! from ${this.population[0].name}`);
+            if(this.population.length) {
+                if (this.population[0].clone()) {
+                    let name = this.generateName();
+                    this.population.push(new Entity(name, this.population[0].race));
+                    this.total++;
+                    //console.log(`First clone is ${name}! from ${this.population[0].name}`);
+                }
             }
+            
+        }
+
+        let arr = this.population.filter(t => !t.dead);
+
+        if (arr.length !== this.population.length) {
+            let died = this.population.length - arr.length
+            //console.log(arr.length, this.population.length, died);
+            this.died += died;
+            this.population = arr;
         }
 
     }
@@ -54,6 +61,7 @@ class Planet {
         let nr = Math.floor(Math.random() * races.length);
         let race = races[nr]
         this.population.push(new Entity(name, race));
+        this.total++;
         //console.log(`First life on ${this.name} is ${name}! Race ${race}`);
     }
 

@@ -11,7 +11,7 @@ class Entity {
         this.age++;
         this.endLifeCycle();
         let nr = Math.floor(Math.random() * 10000);
-        if (nr > 9940) {
+        if (nr > 9975) {
             return true
         }
 
@@ -19,8 +19,10 @@ class Entity {
     }
 
     endLifeCycle() {
-        let nr = this.getRandomInt(1500, 2500)
+        let nr = this.getRandomInt(500, 800)
         if(this.age > nr) this.dead = true;
+
+        if(this.offsprings > 5) this.dead = true;
         
     }
 
